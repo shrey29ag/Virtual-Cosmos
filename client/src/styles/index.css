@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── CSS Variables ─────────────────────────────────────────────────────────── */
+:root {
+  --cosmos-bg: #0d0f1a;
+  --cosmos-surface: rgba(26, 31, 58, 0.85);
+  --cosmos-border: rgba(91, 124, 250, 0.25);
+  --cosmos-accent: #5c7cfa;
+  --cosmos-accent-2: #a78bfa;
+  --cosmos-text: #e2e8f0;
+  --cosmos-text-muted: #94a3b8;
+  --cosmos-glow: rgba(92, 124, 250, 0.4);
+}
+
+/* ─── Base Reset ─────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--cosmos-bg);
+  color: var(--cosmos-text);
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--cosmos-border); border-radius: 4px; }
+
+/* ─── Canvas wrapper ─────────────────────────────────────────────────────────── */
+#cosmos-canvas-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  cursor: default;
+}
+
+#cosmos-canvas-container canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ─── Glassmorphism card ──────────────────────────────────────────────────────── */
+.glass-card {
+  background: var(--cosmos-surface);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--cosmos-border);
+  border-radius: 16px;
+}
+
+/* ─── Proximity pulse ring ──────────────────────────────────────────────────── */
+@keyframes proximityPulse {
+  0%   { transform: scale(1);   opacity: 0.6; }
+  50%  { transform: scale(1.4); opacity: 0.2; }
+  100% { transform: scale(1);   opacity: 0.6; }
+}
+.proximity-ring {
+  animation: proximityPulse 1.8s ease-in-out infinite;
+}
+
+/* ─── Chat panel slide-in ──────────────────────────────────────────────────── */
+@keyframes slideInRight {
+  from { transform: translateX(110%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+.chat-panel-enter {
+  animation: slideInRight 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ─── Notification toast ─────────────────────────────────────────────────────── */
+@keyframes toastIn {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.toast-enter { animation: toastIn 0.3s ease-out; }
+
+/* ─── Message bubble ──────────────────────────────────────────────────────────── */
+@keyframes bubbleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+.msg-bubble { animation: bubbleIn 0.2s ease-out; }
+
+/* ─── Star field background ───────────────────────────────────────────────────── */
+.stars-bg {
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 50% 80%, rgba(255,255,255,0.25) 0%, transparent 100%),
+    radial-gradient(1px 1px at 10% 60%, rgba(255,255,255,0.2) 0%, transparent 100%),
+    radial-gradient(1px 1px at 90% 50%, rgba(255,255,255,0.35) 0%, transparent 100%),
+    radial-gradient(1100px 600px at 60% 40%, rgba(92, 124, 250, 0.06) 0%, transparent 70%),
+    radial-gradient(800px 400px at 20% 70%, rgba(167, 139, 250, 0.05) 0%, transparent 70%);
+}
+
+/* ─── Glow button ────────────────────────────────────────────────────────────── */
+.btn-cosmos {
+  background: linear-gradient(135deg, #5c7cfa, #a78bfa);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  box-shadow: 0 4px 24px rgba(92, 124, 250, 0.45);
+}
+.btn-cosmos:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(92, 124, 250, 0.65);
+}
+.btn-cosmos:active {
+  transform: translateY(0);
+  opacity: 0.9;
+}
+
+/* ─── Input ─────────────────────────────────────────────────────────────────── */
+.cosmos-input {
+  background: rgba(13, 15, 26, 0.7);
+  border: 1px solid var(--cosmos-border);
+  border-radius: 10px;
+  color: var(--cosmos-text);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.cosmos-input:focus {
+  border-color: var(--cosmos-accent);
+  box-shadow: 0 0 0 3px rgba(92, 124, 250, 0.2);
+}
+.cosmos-input::placeholder { color: var(--cosmos-text-muted); }
+
+/* ─── Tag / badge ────────────────────────────────────────────────────────────── */
+.cosmos-badge {
+  background: linear-gradient(135deg, rgba(92,124,250,0.25), rgba(167,139,250,0.2));
+  border: 1px solid rgba(92,124,250,0.35);
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #a5b4fc;
+  padding: 2px 10px;
+}
