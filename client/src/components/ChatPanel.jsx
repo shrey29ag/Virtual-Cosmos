@@ -40,15 +40,12 @@ function MessageBubble({ msg, myUserId }) {
   )
 }
 
-export default function ChatPanel({ myPlayer, proximityRoom, onClose }) {
-  const [messages, setMessages] = useState([])          
+export default function ChatPanel({ myPlayer, proximityRoom, messages, onClose }) {
   const [input, setInput] = useState('')
   const [showEmoji, setShowEmoji] = useState(false)
   const [isTyping, setIsTyping] = useState(false)
   const typingTimerRef = useRef(null)
   const messagesEndRef = useRef(null)
-
-  const historyRef = useRef(new Map())
 
   const roomId = proximityRoom?.roomId
   const partnerUsername = proximityRoom?.partnerUsername
@@ -57,31 +54,13 @@ export default function ChatPanel({ myPlayer, proximityRoom, onClose }) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [])
 
-  useEffect(() => { scrollToBottom() }, [messages, scrollToBottom])
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages, scrollToBottom])
 
   useEffect(() => {
-
-    const saved = roomId ? (historyRef.current.get(roomId) ?? []) : []
-    setMessages(saved)
     setInput('')
     setShowEmoji(false)
-  }, [roomId])
-
-  useEffect(() => {
-    const handler = (msg) => {
-      if (msg.roomId !== roomId) return
-      setMessages((prev) => {
-
-        if (prev.some((m) => m.id === msg.id)) return prev
-        const updated = [...prev, msg]
-
-        historyRef.current.set(msg.roomId, updated)
-        return updated
-      })
-    }
-
-    socket.on('chat:message', handler)
-    return () => socket.off('chat:message', handler)
   }, [roomId])
 
   useEffect(() => {

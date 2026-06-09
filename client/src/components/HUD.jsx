@@ -1,5 +1,5 @@
 
-export default function HUD({ myPlayer, playerCount, proximityRoom, onOpenChat }) {
+export default function HUD({ myPlayer, playerCount, proximityRoom, unreadCount, onOpenChat }) {
   return (
     <>
 
@@ -69,10 +69,15 @@ export default function HUD({ myPlayer, playerCount, proximityRoom, onOpenChat }
           <button
             id="open-chat-btn"
             onClick={onOpenChat}
-            className="btn-cosmos flex items-center gap-2 px-4 py-2 text-sm"
+            className="btn-cosmos flex items-center gap-2 px-4 py-2 text-sm relative"
           >
             <span>💬</span>
             <span>Chat with @{proximityRoom.partnerUsername}</span>
+            {unreadCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white shadow-lg animate-bounce">
+                {unreadCount}
+              </span>
+            )}
           </button>
         ) : (
           <div

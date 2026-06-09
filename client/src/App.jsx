@@ -14,6 +14,8 @@ export default function App() {
   const [playerCount, setPlayerCount] = useState(1)
 
   const [proximityRoom, setProximityRoom] = useState(null)   
+  const [chatHistories, setChatHistories] = useState({})
+  const [unreadCounts, setUnreadCounts] = useState({})
 
   const prevRoomRef = useRef(null)
 
@@ -60,6 +62,45 @@ export default function App() {
     }
   }, [myPlayer])
 
+  useEffect(() => {
+    if (!myPlayer) return
+
+    const handleChatMessage = (msg) => {
+      setChatHistories((prev) => {
+        const roomMsgs = prev[msg.roomId] || []
+        if (roomMsgs.some((m) => m.id === msg.id)) return prev
+        return {
+          ...prev,
+          [msg.roomId]: [...roomMsgs, msg]
+        }
+      })
+
+      if (!chatOpen || !proximityRoom || proximityRoom.roomId !== msg.roomId) {
+        setUnreadCounts((prev) => ({
+          ...prev,
+          [msg.roomId]: (prev[msg.roomId] || 0) + 1
+        }))
+      }
+    }
+
+    socket.on('chat:message', handleChatMessage)
+    return () => {
+      socket.off('chat:message', handleChatMessage)
+    }
+  }, [myPlayer, chatOpen, proximityRoom])
+
+  useEffect(() => {
+    if (chatOpen && proximityRoom) {
+      setUnreadCounts((prev) => {
+        if (!prev[proximityRoom.roomId]) return prev
+        return {
+          ...prev,
+          [proximityRoom.roomId]: 0
+        }
+      })
+    }
+  }, [chatOpen, proximityRoom])
+
   const handleProximityChange = useCallback((roomId, partnerUsername, partnerUserId) => {
     if (roomId) {
 
@@ -73,6 +114,16 @@ export default function App() {
         toastTimerRef.current = setTimeout(() => setToast(null), 4000)
       }
     } else {
+      if (prevRoomRef.current?.roomId) {
+        const oldRoomId = prevRoomRef.current.roomId
+        setUnreadCounts((prev) => {
+          if (!prev[oldRoomId]) return prev
+          return {
+            ...prev,
+            [oldRoomId]: 0
+          }
+        })
+      }
       setProximityRoom(null)
       setChatOpen(false)
       prevRoomRef.current = null
@@ -100,6 +151,7 @@ export default function App() {
           myPlayer={myPlayer}
           playerCount={playerCount}
           proximityRoom={proximityRoom}
+          unreadCount={proximityRoom ? (unreadCounts[proximityRoom.roomId] || 0) : 0}
           onOpenChat={() => setChatOpen(true)}
         />
 
@@ -131,6 +183,7 @@ export default function App() {
           <ChatPanel
             myPlayer={myPlayer}
             proximityRoom={proximityRoom}
+            messages={proximityRoom ? (chatHistories[proximityRoom.roomId] || []) : []}
             onClose={() => setChatOpen(false)}
           />
         </div>
