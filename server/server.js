@@ -10,11 +10,16 @@ const Player = require('./models/Player');
 const app = express();
 const httpServer = http.createServer(app);
 
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+let clientUrl = process.env.CLIENT_URL || '';
+if (clientUrl.endsWith('/')) {
+  clientUrl = clientUrl.slice(0, -1);
+}
+
+app.use(cors({ origin: clientUrl, credentials: true }));
 app.use(express.json());
 
 const io = new Server(httpServer, {
-  cors: { origin: process.env.CLIENT_URL, methods: ['GET', 'POST'] },
+  cors: { origin: clientUrl, methods: ['GET', 'POST'] },
 });
 
 const players = new Map();
