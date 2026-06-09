@@ -25,7 +25,8 @@ export default function App() {
   const handleJoin = useCallback(async (username, avatarIndex) => {
     setIsJoining(true)
     try {
-      const res = await fetch('/api/join', {
+      const serverUrl = import.meta.env.VITE_SERVER_URL || ''
+      const res = await fetch(`${serverUrl}/api/join`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, avatarIndex }),
